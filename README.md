@@ -3,7 +3,7 @@
     `$ docker-compose up -d` 
 
 2 コンテナが立ち上がったら下記のコマンドを実行
-    `$ docker-compose exec composer install` 
+    `$ docker-compose exec php composer install` 
 
 3 インストールが終了すると、下記ポート指定でアクセスできる
 <http://127.0.0.1:8080> 

@@ -1,7 +1,7 @@
 【環境構築】
 1 docker-compose.ymlファイルがあるディレクトリで下記のコマンドを実行
 
-    `$ docker-compose up -d` 
+`$ docker-compose up -d` 
 
 2 コンテナが立ち上がったら下記のコマンドを実行
 

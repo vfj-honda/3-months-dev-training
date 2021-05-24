@@ -15,7 +15,6 @@ class UsersTableSeeder extends Seeder
         DB::table('users')->insert([
             'name' => '本多誠浩',
             'email' => 'mhonda@vitalify.jp',
-            'password' => bcrypt('password'),
             'chatwork_id' => 5708259,
             'gender' => 1,
             'authority' => 1,
@@ -23,7 +22,6 @@ class UsersTableSeeder extends Seeder
         DB::table('users')->insert([
             'name' => '本田正樹',
             'email' => 'book0324.lk@gmail.com',
-            'password' => bcrypt('password'),
             'chatwork_id' => 1234567,
             'gender' => 1,
             'authority' => 2,
@@ -31,7 +29,6 @@ class UsersTableSeeder extends Seeder
         DB::table('users')->insert([
             'name' => '橋本未来',
             'email' => 'mhashimoto@vitalify.jp',
-            'password' => bcrypt('password'),
             'chatwork_id' => 7584639,
             'gender' => 1,
             'authority' => 2,
@@ -39,7 +36,6 @@ class UsersTableSeeder extends Seeder
         DB::table('users')->insert([
             'name' => '佐藤一朗',
             'email' => 'isatou@vitalify.jp',
-            'password' => bcrypt('password'),
             'chatwork_id' => 1470375,
             'gender' => 1,
             'authority' => 2,

@@ -10,8 +10,8 @@ class Skips extends Model
     use SoftDeletes;
     
     protected $table = 'skips';
-    protected $fillable = ['skip_day', 'user_id', 'deleted_at'];
+    protected $fillable = ['skip_day', 'user_id', 'deleted_at', 'created_at', 'updated_at'];
 
-    
+
 
 }

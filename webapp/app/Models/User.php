@@ -20,7 +20,6 @@ class User extends Authenticatable
     protected $fillable = [
         'name',
         'email',
-        'password',
         'chatwork_id', 
         'employee_number',
         'authority',
@@ -28,6 +27,9 @@ class User extends Authenticatable
         'entry_day',
         'gender',
         'country',
+        'created_at',
+        'updated_at',
+        'deleted_at'
     ];
 
     /**

@@ -29,6 +29,6 @@ class CreateSkipTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('skip');
+        Schema::dropIfExists('skips');
     }
 }

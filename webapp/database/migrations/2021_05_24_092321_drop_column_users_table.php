@@ -14,7 +14,7 @@ class DropColumnUsersTable extends Migration
     public function up()
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->string('password')->nullable()->default('0000')->change();
+            $table->string('password')->nullable()->default(bcrypt('0000'))->change();
         });
     }
 

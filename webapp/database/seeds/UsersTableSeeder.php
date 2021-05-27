@@ -18,6 +18,7 @@ class UsersTableSeeder extends Seeder
             'chatwork_id' => 5708259,
             'gender' => 1,
             'authority' => 1,
+            'password' => bcrypt('vitalify')
         ]);
         DB::table('users')->insert([
             'name' => '本田正樹',

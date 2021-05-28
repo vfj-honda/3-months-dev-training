@@ -12,34 +12,17 @@ class UsersTableSeeder extends Seeder
      */
     public function run()
     {
-        DB::table('users')->insert([
-            'name' => '本多誠浩',
-            'email' => 'mhonda@vitalify.jp',
-            'chatwork_id' => 5708259,
-            'gender' => 1,
-            'authority' => 1,
-            'password' => bcrypt('vitalify')
-        ]);
-        DB::table('users')->insert([
-            'name' => '本田正樹',
-            'email' => 'book0324.lk@gmail.com',
-            'chatwork_id' => 1234567,
-            'gender' => 1,
-            'authority' => 2,
-        ]);
-        DB::table('users')->insert([
-            'name' => '橋本未来',
-            'email' => 'mhashimoto@vitalify.jp',
-            'chatwork_id' => 7584639,
-            'gender' => 1,
-            'authority' => 2,
-        ]);
-        DB::table('users')->insert([
-            'name' => '佐藤一朗',
-            'email' => 'isatou@vitalify.jp',
-            'chatwork_id' => 1470375,
-            'gender' => 1,
-            'authority' => 2,
-        ]);
+        $csv = fopen(resource_path().'/blogorderlist_2021_05_27.csv', $mode='r');
+
+        $data = fgetcsv($csv);
+        $index = 0;
+        while($data = fgetcsv($csv, $delimiter=',')){
+            DB::table('users')->insert([
+                'name' => $data[0],
+                'chatwork_id' => $data[1],
+                'email' => $index . '@vitalify.jp',
+            ]);
+            $index += 1;
+        }
     }
 }

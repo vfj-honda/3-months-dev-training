@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\User;
 use Illuminate\Database\Seeder;
 
 class OrdersTableSeeder extends Seeder
@@ -11,22 +12,20 @@ class OrdersTableSeeder extends Seeder
      */
     public function run()
     {
-        DB::table('orders')->insert([
-            'user_id' => '1',
-            'order_number' => 1,
-        ]);
-        DB::table('orders')->insert([
-            'user_id' => '2',
-            'order_number' => 2,
-        ]);
-        DB::table('orders')->insert([
-            'user_id' => '3',
-            'order_number' => 3,
-        ]);
-        DB::table('orders')->insert([
-            'user_id' => '4',
-            'order_number' => 4,
-        ]);
-        
+
+        $csv = fopen(resource_path().'/blogorderlist_2021_05_27.csv', $mode='r');
+
+        $data = fgetcsv($csv);
+
+        $index = 0;
+        while($data = fgetcsv($csv, $delimiter=',')){
+            $user = User::where('chatwork_id', $data[1])->firstOrFail();
+            $index += 1;
+            DB::table('orders')->insert([
+                'user_id' => $user->id,
+                'order_number' => $index,
+            ]);
+        }
+
     }
 }

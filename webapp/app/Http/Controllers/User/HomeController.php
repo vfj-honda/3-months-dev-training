@@ -3,7 +3,10 @@
 namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
+use App\Models\Calendar;
+
 use Illuminate\Http\Request;
+
 
 class HomeController extends Controller
 {
@@ -14,7 +17,9 @@ class HomeController extends Controller
      */
     public function index()
     {
-        return view('home');
+        $calender = new Calendar;
+
+        return view('home', $data = ['dates' => $calender->getCalendarDates(2021, 5), 'currentMonth' => 5]);
     }
 
 }

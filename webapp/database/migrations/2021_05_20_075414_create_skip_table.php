@@ -15,7 +15,7 @@ class CreateSkipTable extends Migration
     {
         Schema::create('skips', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->timestamp('skip_day');
+            $table->timestamp('skip_day')->default(null);
             $table->unsignedinteger('employee')->default(0);
             $table->softDeletes();
             $table->timestamps();

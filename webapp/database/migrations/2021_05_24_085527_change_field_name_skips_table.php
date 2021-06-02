@@ -13,12 +13,7 @@ class ChangeFieldNameSkipsTable extends Migration
      */
     public function up()
     {
-        Schema::table('skips', function (Blueprint $table) {
-            $table->renameColumn('employee', 'user_id');
-        });
-        Schema::table('skips', function (Blueprint $table) {
-            $table->bigInteger('user_id')->unsigned()->default(0)->change();
-        });
+
     }
 
     /**

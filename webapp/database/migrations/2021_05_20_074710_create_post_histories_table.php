@@ -17,7 +17,7 @@ class CreatePostHistoriesTable extends Migration
             $table->bigIncrements('id');
             $table->bigInteger('user_id')->unsigned();
             $table->foreign('user_id')->references('id')->on('users');
-            $table->timestamp('post_day');
+            $table->dateTime('post_day')->default(null);
             $table->unsignedtinyInteger('post_flag')->default(0);
             $table->string('url')->nullable();
             $table->string('title')->nullable();

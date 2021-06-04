@@ -7,6 +7,41 @@
 @stop
 
 @section('content')
+    @if (count($errors) > 0)
+      <div class="alert alert-danger">
+        <ul>
+          @foreach ($errors->all() as $error)
+              <li>{{ $error }}</li>
+          @endforeach
+        </ul>
+      </div>
+    @endif
+<form action="{{ route('admin.employee.order_list.switch') }}" method="post">
+@method('PUT')
+@csrf
+
+<div class="form-group">
+
+  <select name="switch_1" id="switch_1" class="form-controll">
+    @foreach ($orders as $order)
+      <option value="{{ $order->order_number }}"> {{ $order->name }} </option>
+    @endforeach
+  </select>
+
+と
+
+  <select name="switch_2" id="switch_2" class="form-controll">
+    @foreach ($orders as $order)
+      <option value="{{ $order->order_number }}"> {{ $order->name }} </option>
+    @endforeach
+  </select>
+
+を入れ替える
+
+  <input type="submit" value="決定" class="btn btn-primary">
+</div>
+
+</form>
 
 @foreach ($orders as $order)
 

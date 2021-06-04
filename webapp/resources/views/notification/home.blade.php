@@ -1,5 +1,58 @@
-@extends('layouts.main')
+@extends('adminlte::page')
+
+@section('title', '')
+
+@section('content_header')
+    <h1>通知編集</h1>
+@stop
 
 @section('content')
+    @if (count($errors) > 0)
+      <div class="alert alert-danger">
+        <ul>
+          @foreach ($errors->all() as $error)
+              <li>{{ $error }}</li>
+          @endforeach
+        </ul>
+      </div>
+    @endif
+    <form action="{{ route('admin.notification.update') }}" method="post">
+    @method('PUT')
+    @csrf
+      <div class="form-group">
+        <input type="text" name="advance_notice_days" id="advance_notice_days" value="{{ $notification->advance_notice_days }}">
+        <label for="advance_notice_days">日前に通知</label>
+      </div>
+      <div class="form-group">
+        <label for="chatwork_flag">Chatworkで通知する</label>
+        <input type="checkbox" name="chatwork_flag" id="chatwork_flag" {{ $notification->chatwork_flag==1 ? 'checked' : ''}}>
+      </div>
+      <div class="form-group">
+        <label for="chatwork_text">文面 (chatwork)</label>
+        <input type="textarea" name="chatwork_text" id="chatwork_text" value="{{ $notification->chatwork_text }}">
+      </div>
+      <div class="form-group">
+        <label for="mail_flag">E-mailで通知する</label>
+        <input type="checkbox" name="mail_flag" id="mail_flag" {{ $notification->mail_flag==1 ? 'checked' : ''}}>
+      </div>
+      <div class="form-group">
+        <label for="mail_text">文面 (E-mail)</label>
+        <input type="textarea" name="mail_text" id="mail_text" value="{{ $notification->mail_text }}">
+      </div>
+      
+      <input type="submit" value="更新" class="btn btn-primary">
+    </form>
 
-@endsection
+@if (isset($res))
+{{ var_dump($res) }}
+@endif
+
+@stop
+
+@section('css')
+    <link rel="stylesheet" href="/css/admin_custom.css">
+@stop
+
+@section('js')
+   
+@stop

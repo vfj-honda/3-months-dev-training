@@ -1,5 +1,5 @@
 @extends('layouts.main')
 
 @section('content')
-logs
+notification logs
 @endsection

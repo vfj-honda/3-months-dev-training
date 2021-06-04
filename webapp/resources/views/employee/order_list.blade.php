@@ -3,11 +3,18 @@
 @section('title', 'Dashboard')
 
 @section('content_header')
-    <h1>Dashboard</h1>
+    <h1>順番リスト</h1>
 @stop
 
 @section('content')
-    <p></p>
+
+@foreach ($orders as $order)
+
+{{ $order->order_number }}
+{{ $order->name }}
+
+@endforeach
+
 @stop
 
 @section('css')

@@ -37,6 +37,7 @@ class HomeController extends Controller
         $designated_date = new Carbon($date_str);
         
         # 指定された年月による場合分け
+        # if文の条件をメソッドに
         if ($today->month == $designated_date->month) {
             # post_histories と orders, skipsをカレンダーと結合
             
@@ -208,7 +209,7 @@ class HomeController extends Controller
     public function root()
     {
         $now = Carbon::now();
-        $path = sprintf("%04d/%02d", $now->year, $now->month);
+        $path = sprintf("dashboard/%04d/%02d", $now->year, $now->month);
         return redirect($path);
     }
 

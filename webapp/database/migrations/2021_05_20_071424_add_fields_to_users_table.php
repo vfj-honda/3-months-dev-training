@@ -17,7 +17,7 @@ class AddFieldsToUsersTable extends Migration
             $table->softDeletes();
             $table->unsignedinteger('chatwork_id');
             $table->unsignedinteger('employee_number')->nullable();
-            $table->unsignedtinyInteger('authority')->default(1);
+            $table->unsignedtinyInteger('authority')->default(0);
             $table->timestamp('birthday')->nullable();
             $table->timestamp('entry_day')->nullable();
             $table->unsignedtinyInteger('gender')->nullable();

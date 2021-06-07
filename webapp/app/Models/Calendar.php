@@ -11,7 +11,7 @@ class Calendar
      *
      * @return array
      */
-    public function getCurrentMonthCalendar(int $year, int $month)
+    public function getCalendar(int $year, int $month)
     {
         $dateStr = sprintf('%04d-%02d-01', $year, $month);
         $date = new Carbon($dateStr);

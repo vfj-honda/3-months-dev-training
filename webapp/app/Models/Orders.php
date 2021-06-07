@@ -50,19 +50,22 @@ class Orders extends Model
     }
 
     /**
-     * 
+     * 受け取った$order_numberから一巡分のordersを返す
      * 
      * @return Collection
      */
     public function getOrders(int $order_number)
     {
+
         $orders = $this->where('order_number', '>', $order_number)
                        ->orderBy('order_number', 'asc')
                        ->join('users', 'orders.user_id', '=', 'users.id')
+                       ->select('users.name', 'users.id', 'orders.order_number')
                        ->get();
         $tmp    = $this->where('order_number', '<=', $order_number)
                        ->orderBy('order_number', 'asc')
                        ->join('users', 'orders.user_id', '=', 'users.id')
+                       ->select('users.name', 'users.id', 'orders.order_number')
                        ->get();
         $orders = $orders->concat($tmp);
 

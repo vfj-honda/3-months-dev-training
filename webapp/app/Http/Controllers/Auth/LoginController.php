@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Providers\RouteServiceProvider;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
+use Illuminate\Http\Request;
 
 class LoginController extends Controller
 {
@@ -36,5 +37,19 @@ class LoginController extends Controller
     public function __construct()
     {
         $this->middleware('guest')->except('logout');
+    }
+
+    /**
+     * 権限による認証を追加する
+     *
+     * @param  \Illuminate\Http\Request $request
+     * @return Response
+     */
+    protected function credentials(Request $request)
+    {
+        return array_merge( 
+            $request->only($this->username(), 'password'),
+            [ 'authority' => 1 ] // 追加条件
+        );
     }
 }

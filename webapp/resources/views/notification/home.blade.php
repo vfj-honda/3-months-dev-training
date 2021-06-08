@@ -16,20 +16,19 @@
         </ul>
       </div>
     @endif
-    <form action="{{ route('admin.notification.update') }}" method="post">
+    <form action="{{ route('admin.notification.update') }}" method="post" onsubmit="return false;">
     @method('PUT')
     @csrf
-      <div class="form-group">
-        <input type="text" name="advance_notice_days" id="advance_notice_days" value="{{ $notification->advance_notice_days }}">
-        <label for="advance_notice_days">日前に通知</label>
-      </div>
+
       <div class="form-group">
         <label for="chatwork_flag">Chatworkで通知する</label>
         <input type="checkbox" name="chatwork_flag" id="chatwork_flag" {{ $notification->chatwork_flag==1 ? 'checked' : ''}}>
       </div>
       <div class="form-group">
         <label for="chatwork_text">文面 (chatwork)</label>
-        <input type="textarea" name="chatwork_text" id="chatwork_text" value="{{ $notification->chatwork_text }}">
+        <textarea name="chatwork_text" id="chatwork_text" class="form-control input-lg" rows="7">
+        {{ $notification->chatwork_text }}
+        </textarea>
       </div>
       <div class="form-group">
         <label for="mail_flag">E-mailで通知する</label>
@@ -37,10 +36,12 @@
       </div>
       <div class="form-group">
         <label for="mail_text">文面 (E-mail)</label>
-        <input type="textarea" name="mail_text" id="mail_text" value="{{ $notification->mail_text }}">
+        <textarea type="textarea" name="mail_text" id="mail_text" class="form-control" rows="7">
+        {{ $notification->mail_text }}
+        </textarea>
       </div>
       
-      <input type="submit" value="更新" class="btn btn-primary">
+      <input type="button" onclick="submit();" value="更新" class="btn btn-primary">
     </form>
 
 @if (isset($res))
@@ -54,5 +55,6 @@
 @stop
 
 @section('js')
-   
+   <script>
+   </script>
 @stop

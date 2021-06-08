@@ -65,6 +65,7 @@ class CalendarService {
 
         }
 
+        $today = $start_d;
         $n = 0;
         foreach ($dates as $key => $value) {
 
@@ -73,6 +74,11 @@ class CalendarService {
                 
                 if (!$value->isWeekday()) {
                     # 休日の場合何もしない
+                    continue;
+                }
+
+                if ($value->lt($today)) {
+                    # 今日より前には何もしない
                     continue;
                 }
 

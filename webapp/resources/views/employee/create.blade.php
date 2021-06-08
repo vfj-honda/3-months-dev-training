@@ -17,7 +17,7 @@
       </div>
     @endif
 
-    <form action="/employee/create" method="post">
+    <form action="{{ route('admin.employee.store') }}" method="post">
     @csrf
         <table>
             <tbody>

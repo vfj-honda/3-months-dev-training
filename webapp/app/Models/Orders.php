@@ -60,12 +60,12 @@ class Orders extends Model
         $orders = $this->where('order_number', '>', $order_number)
                        ->orderBy('order_number', 'asc')
                        ->join('users', 'orders.user_id', '=', 'users.id')
-                       ->select('users.name', 'users.id', 'orders.order_number')
+                       ->select('users.name', 'users.id', 'orders.order_number', 'users.chatwork_id')
                        ->get();
         $tmp    = $this->where('order_number', '<=', $order_number)
                        ->orderBy('order_number', 'asc')
                        ->join('users', 'orders.user_id', '=', 'users.id')
-                       ->select('users.name', 'users.id', 'orders.order_number')
+                       ->select('users.name', 'users.id', 'orders.order_number', 'users.chatwork_id')
                        ->get();
         $orders = $orders->concat($tmp);
 

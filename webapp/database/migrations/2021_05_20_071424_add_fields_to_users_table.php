@@ -15,7 +15,7 @@ class AddFieldsToUsersTable extends Migration
     {
         Schema::table('users', function (Blueprint $table) {
             $table->softDeletes();
-            $table->unsignedinteger('chatwork_id');
+            $table->string('chatwork_id');
             $table->unsignedinteger('employee_number')->nullable();
             $table->unsignedtinyInteger('authority')->default(0);
             $table->timestamp('birthday')->nullable();

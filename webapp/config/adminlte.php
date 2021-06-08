@@ -267,6 +267,11 @@ return [
                     'url'         => 'admin/employee/orders_list',
                     'icon'        => '',
                 ],
+                [
+                    'text'        => '権限変更',
+                    'url'         => 'admin/employee/authority',
+                    'icon'        => '',
+                ],
             ],
         ],
 

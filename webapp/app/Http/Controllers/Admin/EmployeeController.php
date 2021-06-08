@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreEmployeeRequest;
-use Illuminate\Foundation\Auth\User;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -58,7 +58,7 @@ class EmployeeController extends Controller
                 $employee = User::find($id);
 
                 # 2) delete
-                $employee->orders()->delete();
+                $employee->order->delete();
                 $employee->delete();
 
             }); 
@@ -138,24 +138,39 @@ class EmployeeController extends Controller
  
     }
 
+
+    public function authority()
+    {
+        $not_auth_employee = User::where('authority', '=', 0)
+                                 ->orderBy('id', 'asc')
+                                 ->get();
+        $auth_employee = User::where('authority', '=', 1)
+                             ->orderBy('id', 'asc')
+                             ->get();
+        return view('employee/authority', $data = ['not_auth_employee' => $not_auth_employee, 'auth_employee' => $auth_employee]);
+    }
+
     /**
      * elevate an users authority
      * Method: PUT
      * 
      */
-    public function elevate(Request $request, $id)
+    public function elevate(Request $request)
     {
         try {
-            
-            $employee = User::find($id);
+            return DB::transaction(function() use ($request) {
+                
+                $employee = User::find($request->elevate_user_id);
+        
+                $employee->authority = 1;
+                
+                if(!$employee->save()){
+                   throw new \Exception('Elevate authority failed');
+                }
     
-            $employee->authority = 1;
-            
-            if(!$employee->save()){
-               throw new \Exception('Elevate authority failed');
-            }
+                return redirect()->route('admin.employee.authority');
 
-            return redirect()->route('admin.employee.list');
+            });
 
         } catch (\Exception $e) {
 
@@ -165,19 +180,22 @@ class EmployeeController extends Controller
 
     }
 
-    public function diselevate(Request $request, $id)
+    public function diselevate(Request $request)
     {
         try {
-            
-            $employee = User::find($id);
+            return DB::transaction(function() use ($request) {
+                
+                $employee = User::find($request->diselevate_user_id);
+        
+                $employee->authority = 0;
+                
+                if(!$employee->save()){
+                   throw new \Exception('Diselevate authority failed');
+                }
     
-            $employee->authority = 0;
-            
-            if(!$employee->save()){
-               throw new \Exception('Diselevate authority failed');
-            }
+                return redirect()->route('admin.employee.authority');
 
-            return redirect()->route('admin.employee.list');
+            });
 
         } catch (\Exception $e) {
 

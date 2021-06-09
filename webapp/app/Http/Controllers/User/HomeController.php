@@ -11,6 +11,7 @@ use App\Services\CalendarService;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Log;
 
 class HomeController extends Controller
@@ -23,7 +24,13 @@ class HomeController extends Controller
     public function index($year, $month)
     {
         # 指定された年、月の当番表を出力する
+
+
         
+        if (!$this->is_valid($year, $month)) {
+            Log::info('not valid');
+            return App::abort(404);
+        }
         $today = Carbon::now('Asia/Tokyo');
         
         # 指定された年月による現在、未来、過去の場合分け
@@ -109,6 +116,23 @@ class HomeController extends Controller
         return false;
     }
 
+    private function is_valid($year, $month)
+    {
+
+        if (!is_numeric($year) || !is_numeric($month)) {
+            return false;
+        }
+        
+        $months = [1,2,3,4,5,6,7,8,9,10,11,12];
+        
+        if (!in_array($month, $months)) {
+            return false;
+        }
+        
+        return true;
+
+    }
+
     /**
      * 
      * redirect to /{year}/{month}
@@ -116,7 +140,7 @@ class HomeController extends Controller
     public function root()
     {
         $now = Carbon::now();
-        $path = sprintf("dashboard/%04d/%02d", $now->year, $now->month);
+        $path = sprintf("admin/dashboard/%04d/%02d", $now->year, $now->month);
         return redirect($path);
     }
 

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Skips;
+use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -30,7 +31,7 @@ class SkipController extends Controller
                     throw new \Exception('Skip saving is failed.');
                 }
 
-                return redirect(route('admin.home'));
+                return redirect(route('user.root'));
             });
             
         } catch (Exception $e) {
@@ -53,12 +54,24 @@ class SkipController extends Controller
 
                 $skip->delete();
                 
-                return redirect(route('admin.home'));
+                return redirect(route('user.root'));
             });
 
         } catch (Exception $e) {
             return back()->withErrors($e->getMessage());
         }
         
+    }
+
+    /**
+     * 
+     * 
+     * 
+     */
+    public function import(Request $request)
+    {
+        $filename = Carbon::now()->format('Y-m-d-h:m:s');
+        $request->file('csv_file')->storeAs('/media', $filename.'.csv');
+        return redirect(route('user.root'));
     }
 }

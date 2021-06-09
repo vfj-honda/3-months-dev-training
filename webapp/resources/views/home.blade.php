@@ -1,19 +1,34 @@
-@extends('adminlte::page')
+<?php
 
-@section('title', 'Dashboard')
+$admin = auth()->user()->authority;
+?>
 
-@section('content_header')
-    <h1>カレンダー</h1>
-    <form action="{{ route('user.home', [$currentYear, $currentMonth-1]) }}" method="get">
-    <input type="submit" value="前月へ" class='btn btn-secondary'></form>
-    <form action="{{ route('user.home', [$currentYear, $currentMonth+1]) }}" method="get">
-    <input type="submit" value="次月へ" class='btn btn-secondary'></form>
-    <!-- <form action="{{ route('user.root') }}" method="get">
-    <input type="submit" value="今月" class='btn btn-secondary'></form> -->
-@stop
+@extends($admin ? 'adminlte::page' : 'layouts.main')
 
 @section('content')
- 
+    
+    <div class="container">
+    <h1>カレンダー</h1>
+    <div class="row justify-content-between">
+      <label for=""　class="col-2">
+        <form action="{{ route('user.home', [$currentYear, $currentMonth-1]) }}" method="get">
+        <input type="submit" value="前月へ" class='btn btn-secondary'></form>
+      </label>
+
+      <label for=""　class="col-2">
+        <form action="{{ route('user.home', [$currentYear, $currentMonth+1]) }}" method="get">
+        <input type="submit" value="次月へ" class='btn btn-secondary'></form>
+      </label>
+      
+      @user
+        <label for="">
+          <form action="{{ route('logout') }}" method="post">
+          @csrf
+          <input type="submit" value="ログアウト" class='btn btn-secondary'></form>
+        </label>
+      @enduser
+    </div>
+
 <table class="table table-bordered">
   <thead>
     <tr>
@@ -61,6 +76,8 @@
   </tbody>
 </table>
 
+@admin
+
 @if (isset($skips))
 <h1>Skipの登録</h1>
 
@@ -95,13 +112,15 @@
 
 @endif
 
-@stop
+<h4>祝日ファイル(csv)を取り込む</h4>
+<form action="{{ route('admin.skips.csv_import') }}" method="post" enctype='multipart/form-data'>
+@csrf
+<input type="file" name="csv_file" id="csv_file">
+<input type="submit" value="送信">
+</form>
+@endadmin
+</div>
+@endsection
 
-@section('css')
-    <link rel="stylesheet" href="/css/admin_custom.css">
-@stop
 
-@section('js')
-    <script> console.log('Hi!'); </script>
-@stop
 

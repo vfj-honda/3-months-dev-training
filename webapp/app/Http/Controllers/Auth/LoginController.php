@@ -39,17 +39,8 @@ class LoginController extends Controller
         $this->middleware('guest')->except('logout');
     }
 
-    /**
-     * 権限による認証を追加する
-     *
-     * @param  \Illuminate\Http\Request $request
-     * @return Response
-     */
-    protected function credentials(Request $request)
+    protected function loggedOut(Request $request)
     {
-        return array_merge( 
-            $request->only($this->username(), 'password'),
-            [ 'authority' => 1 ] // 追加条件
-        );
+        return redirect(route('user.root'));
     }
 }

@@ -48,13 +48,6 @@
             </tr>
             </div>
 
-            <div class="form-group">
-            <tr>
-                <th>社員番号</th>
-                <td><input type="text" name="employee_number" id="employee_number"></td>
-            </tr>
-            </div>
-
             </tbody>
         </table>
 

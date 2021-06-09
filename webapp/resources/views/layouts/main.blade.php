@@ -8,6 +8,8 @@
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
 </head>
 <body>
+<div class="">
     @yield('content')
+</div>
 </body>
 </html>

@@ -49,6 +49,56 @@ class OrderController extends Controller
         }
     }
 
+
+    public function insert(Request $request)
+    {
+        try {
+                return DB::transaction(function() use ($request) {
+
+                    if ( $request->insert_1 < $request->insert_2 ) {
+                        # 小さい番号(insert_1)を大きい番号(insert_2)の後ろに入れる
+                        $insert_1 = Orders::where('order_number', '=', $request->insert_1)->first();
+                        $insert_1->order_number = $request->insert_2;
+                        $insert_1->update();
+            
+                        $orders = Orders::where('order_number', '<=', $request->insert_2)
+                                        ->where('order_number', '>', $request->insert_1)
+                                        ->where('user_id', '!=', $insert_1->user_id)
+                                        ->get();
+                        
+                        foreach ($orders as $o) {
+                            $o->order_number -= 1;
+                            $o->update();
+                        }
+                        
+                    }
+
+                    if ( $request->insert_1 > $request->insert_2 ) {
+                        # 大きい番号(insert_1)を小さい番号(insert_2)の後ろに入れる
+                        $insert_1 = Orders::where('order_number', '=', $request->insert_1)->first();
+                        $insert_1->order_number = $request->insert_2 + 1;
+                        $insert_1->update();
+
+                        $orders = Orders::where('order_number', '>=', $request->insert_2 + 1)
+                                        ->where('order_number', '<', $request->insert_1)
+                                        ->where('user_id', '!=', $insert_1->user_id)
+                                        ->get();
+                        
+                        foreach ($orders as $o) {
+                            $o->order_number += 1;
+                            $o->update();
+                        }
+                    }
+
+                    return redirect(route('admin.employee.order_list'));
+                });
+        } catch (Exception $e) {
+            return back()->withErrors($e->getMessage());
+        }
+
+    }
+
+
     public function show()
     {
         $orders = Orders::orderBy('order_number', 'asc')

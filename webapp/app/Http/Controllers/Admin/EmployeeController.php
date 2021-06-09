@@ -4,11 +4,11 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreEmployeeRequest;
+use App\Models\Orders;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-
 
 class EmployeeController extends Controller
 {
@@ -87,8 +87,18 @@ class EmployeeController extends Controller
                 $employee->email = $request->email;
                 $employee->chatwork_id = $request->chatwork_id;
 
-                # 2) save data
+                # 2) save user
                 if (!$employee->save()){
+					throw new \Exception('Save Employee failed');
+				}
+
+                # 3) create order 
+                $order = new Orders();
+                $order->user_id = $employee->id;
+                $order->order_number = Orders::max('order_number') + 1;
+
+                # 4) save order
+                if (!$order->save()){
 					throw new \Exception('Save Employee failed');
 				}
 

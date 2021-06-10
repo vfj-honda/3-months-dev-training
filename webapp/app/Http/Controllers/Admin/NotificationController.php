@@ -44,7 +44,7 @@ class NotificationController extends Controller
 					throw new \Exception('Notification update failed');
                 }
             
-                return redirect(route('admin.notification.edit'))->with('notification', $notification);
+                return redirect(route('admin.notification.edit'))->with(['notification' => $notification, 'success' => '更新が完了しました。']);
             });
 
         

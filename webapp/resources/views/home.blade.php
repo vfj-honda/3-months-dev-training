@@ -1,6 +1,7 @@
 <?php
 
 $admin = auth()->user()->authority;
+$username  = auth()->user()->name;
 ?>
 
 @extends($admin ? 'adminlte::page' : 'layouts.main')
@@ -8,7 +9,36 @@ $admin = auth()->user()->authority;
 @section('content')
     
     <div class="container">
-    <h1>カレンダー</h1>
+    @if ($message = Session::get('success'))
+      <div class="alert alert-success">
+        <strong>{{ $message }}</strong>
+      </div>
+    @endif
+    @if (count($errors) > 0)
+      <div class="alert alert-danger">
+        <ul>
+          @foreach ($errors->all() as $error)
+              <li>{{ $error }}</li>
+          @endforeach
+        </ul>
+      </div>
+    @endif
+    <div class="row">
+    <label for="">
+    <h2>{{ $currentYear . '年' . $currentMonth . '月' }}</h2>
+    </label>
+    @user
+        <label for="">
+          <form action="{{ route('logout') }}" method="post">
+          @csrf
+          <input type="submit" value="ログアウト" class='btn btn-secondary'></form>
+        </label>
+
+        <label for="">
+          {{ $username }}
+        </label>
+    @enduser
+    </div>
     <div class="row justify-content-between">
       <label for=""　class="col-2">
         <form action="{{ route('user.home', [$currentYear, $currentMonth-1]) }}" method="get">
@@ -20,13 +50,6 @@ $admin = auth()->user()->authority;
         <input type="submit" value="次月へ" class='btn btn-secondary'></form>
       </label>
       
-      @user
-        <label for="">
-          <form action="{{ route('logout') }}" method="post">
-          @csrf
-          <input type="submit" value="ログアウト" class='btn btn-secondary'></form>
-        </label>
-      @enduser
     </div>
 
 <table class="table table-bordered">

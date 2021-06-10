@@ -3,9 +3,11 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\StoreSkipRequest;
 use App\Models\Skips;
 use Carbon\Carbon;
 use Exception;
+use App\Services\FileUploadService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -18,7 +20,7 @@ class SkipController extends Controller
      * Method: POST
      * 
      */
-    public function create(Request $request)
+    public function create(StoreSkipRequest $request)
     {
         try {
             
@@ -31,7 +33,7 @@ class SkipController extends Controller
                     throw new \Exception('Skip saving is failed.');
                 }
 
-                return redirect(route('user.root'));
+                return back()->with('success', '正常に作成されました。');
             });
             
         } catch (Exception $e) {
@@ -54,7 +56,7 @@ class SkipController extends Controller
 
                 $skip->delete();
                 
-                return redirect(route('user.root'));
+                return back()->with('success', '正常に削除されました。');
             });
 
         } catch (Exception $e) {
@@ -70,8 +72,35 @@ class SkipController extends Controller
      */
     public function import(Request $request)
     {
-        $filename = Carbon::now()->format('Y-m-d-h:m:s');
-        $request->file('csv_file')->storeAs('/media', $filename.'.csv');
-        return redirect(route('user.root'));
+        try {
+            
+            $file_upload_service = new FileUploadService;
+            # アップロードされたファイルを保存
+            $path = $file_upload_service->csv_upload($request, 'csv_file');
+    
+            $csv = fopen($path, 'r');
+            $data = fgetcsv($csv);
+            while ($data = fgetcsv($csv, $delimiter = ',')) {
+                
+                $skip           = new Skips;
+                $date           = new Carbon($data[0]);
+                $skip->skip_day = $date->format('Y-m-d');
+                $re = new Request($request=['skip_day' => $date->format('Y-m-d')]);
+                try {
+                    
+                    $this->validate($re, ['skip_day' => 'unique:skips,skip_day,NULL,id,deleted_at,NULL']);
+                
+                } catch (Exception $e) {
+                    continue;
+                }
+                $skip->save();
+    
+            }
+            
+            return back()->with('success', 'インポートが正常に終了しました。');
+
+        } catch (Exception $e) {
+            return back()->withErrors($e->getMessage());
+        }
     }
 }

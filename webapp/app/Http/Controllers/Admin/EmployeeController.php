@@ -61,6 +61,8 @@ class EmployeeController extends Controller
                 $employee->order->delete();
                 $employee->delete();
 
+                return redirect(route('admin.employee.list'))->with('success', '削除が完了しました。');
+
             }); 
  
  
@@ -102,7 +104,7 @@ class EmployeeController extends Controller
 					throw new \Exception('Save Employee failed');
 				}
 
-                return redirect()->route('admin.employee.create');
+                return redirect(route('admin.employee.create'))->with('success', '社員を作成しました。');
 
             }); 
 
@@ -135,7 +137,7 @@ class EmployeeController extends Controller
                     throw new \Exception('Save Employee failed');
                 }
  
-                return redirect()->route('admin.employee.edit', $id);
+                return redirect(route('admin.employee.edit', $id))->with('success', '社員情報の更新が完了しました。');
  
             }); 
  
@@ -178,7 +180,7 @@ class EmployeeController extends Controller
                    throw new \Exception('Elevate authority failed');
                 }
     
-                return redirect()->route('admin.employee.authority');
+                return redirect(route('admin.employee.authority'))->with('success', '権限の変更が完了しました。');
 
             });
 
@@ -203,7 +205,7 @@ class EmployeeController extends Controller
                    throw new \Exception('Diselevate authority failed');
                 }
     
-                return redirect()->route('admin.employee.authority');
+                return redirect(route('admin.employee.authority'))->with('success', '権限の変更が完了しました。');
 
             });
 

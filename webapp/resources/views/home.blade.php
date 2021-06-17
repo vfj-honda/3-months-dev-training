@@ -1,7 +1,10 @@
 <?php
 
+use App\Models\User;
+
 $admin = auth()->user()->authority;
 $username  = auth()->user()->name;
+$users = User::all();
 ?>
 
 @extends($admin ? 'adminlte::page' : 'layouts.main')
@@ -101,7 +104,7 @@ $username  = auth()->user()->name;
 
 @admin
 
-@if (isset($skips))
+
 <h1>Skipの登録</h1>
 
 <form action="{{ route('admin.skip.create') }}" method="post">
@@ -133,14 +136,44 @@ $username  = auth()->user()->name;
   </div>
 </form>
 
-@endif
+
 
 <h4>祝日ファイル(csv)を取り込む</h4>
-<form action="{{ route('admin.skips.csv_import') }}" method="post" enctype='multipart/form-data'>
+  <form action="{{ route('admin.skips.csv_import') }}" method="post" enctype='multipart/form-data'>
+  @csrf
+    <div class="form-group">
+      <input type="file" name="csv_file" id="csv_file">
+      <input type="submit" value="送信">
+    </div>
+  </form>
+
+
+
+
+<h3>投稿者を指定して投稿日を登録する</h3>
+
+<form action="{{ route('admin.fixed_post_date.create') }}" method="post">
 @csrf
-<input type="file" name="csv_file" id="csv_file">
-<input type="submit" value="送信">
+  <div class="form-group">
+  <label for="">
+    投稿日:
+    <input type="date" name="create_fixed_post_day" id="create_fixed_post_day">
+  </label>
+  <label for="">
+    投稿者:
+    <select name="user_id" id="user_id">
+      @foreach ($users as $user)
+        <option value="{{ $user->id }}">{{ $user->name }}</option>
+      @endforeach
+    </select>
+    <input type="submit" value="登録" class="btn btn-primary">
+  </label>
+  </div>
 </form>
+
+
+
+
 @endadmin
 </div>
 @endsection

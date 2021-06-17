@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -18,20 +19,21 @@ class Orders extends Model
 
 
     /**
-     * 指定された年月分のorderを返す
+     * 指定された期間のorderを返す
      * 
      * @return Collection of Orders binding User
      */
-    public function getOrdersFromToday(int $order_number, int $months)
+    public function getOrdersFromPointDay(int $user_id, $start_day, $end_day)
     {
-        $orders = $this->getOrders($order_number);
-
-        # (月) x 平日/月
-        $n = ceil((($months + 1) * 25) / $orders->count());
-
-        $orders = $this->union($orders, $result = new Collection(), $n);
+        $order = $this->where('user_id', '=', $user_id)->first();
+        $s_d = new Carbon($start_day);
         
-        return $orders;
+        $order_count = $s_d->diffInDays($end_day); # 何日分か
+
+        $orders = $this->getOrders($order->order_number - 1);
+        $orders = $orders->chunk($order_count);
+        
+        return $orders->get(0);
     }
 
 

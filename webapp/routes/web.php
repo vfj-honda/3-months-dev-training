@@ -56,6 +56,8 @@ Route::group(['prefix' => '/admin', 'middleware' => 'auth'], function(){
         Route::post('/skip/csv_import', 'Admin\SkipController@import')->name('admin.skips.csv_import');
 
         Route::post('/fixed_post_date/create', 'Admin\FixedPostDatesController@create')->name('admin.fixed_post_date.create');
+        Route::delete('/fixed_post_date/destroy', 'Admin\FixedPostDatesController@destroy')->name('admin.fixed_post_date.destroy');
+
         
         Route::get('/logs', 'Admin\LogController@show')->name('admin.log.list');
     });

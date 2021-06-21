@@ -4,6 +4,7 @@ namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
 use App\Models\Calendar;
+use App\Models\FixedPostDates;
 use App\Models\Orders;
 use App\Models\PostHistories;
 use App\Models\Skips;
@@ -43,12 +44,19 @@ class HomeController extends Controller
             # skipsの取得
             $end_d    = array_key_last($dates);
             $start_d  = $today->format('Y-m-d');
-            $skips    = Skips::where('skip_day', '<', $end_d)
+            $skips    = Skips::where('skip_day', '<=', $end_d)
                              ->where('skip_day', '>=', $start_d)
                              ->orderBy('skip_day', 'asc')
                              ->get();
+
+            $fixed_post_dates = FixedPostDates::where('fixed_post_day', '<=', $end_d)
+            ->where('fixed_post_day', '>=', $start_d)
+            ->join('users', 'fixed_post_dates.user_id', '=', 'users.id')
+            ->select('users.name', 'fixed_post_dates.fixed_post_day', 'fixed_post_dates.id')
+            ->orderBy('fixed_post_day', 'asc')
+            ->get();
                 
-            return view('home', $data = ['dates' => $dates, 'currentYear' => $year, 'currentMonth' => $month, 'skips' => $skips]);
+            return view('home', $data = ['dates' => $dates, 'currentYear' => $year, 'currentMonth' => $month, 'skips' => $skips, 'fixedPostDates' => $fixed_post_dates]);
 
         } elseif ($this->is_future($today, $year, $month)) {
             # 未来
@@ -65,8 +73,15 @@ class HomeController extends Controller
                              ->orderBy('skip_day', 'asc')
                              ->get();
 
+            $fixed_post_dates = FixedPostDates::where('fixed_post_day', '<=', $end_d)
+                             ->where('fixed_post_day', '>=', $start_d)
+                             ->join('users', 'fixed_post_dates.user_id', '=', 'users.id')
+                             ->select('users.name', 'fixed_post_dates.fixed_post_day', 'fixed_post_dates.id')
+                             ->orderBy('fixed_post_day', 'asc')
+                             ->get();
+                 
             return view('home', $data = ['dates' => $dates, 'currentYear' => $year, 'currentMonth' => $month,
-                                         'skips' => $skips]);
+                                         'skips' => $skips, 'fixedPostDates' => $fixed_post_dates]);
 
         } elseif ($this->is_past($today, $year, $month)) {
             # 過去

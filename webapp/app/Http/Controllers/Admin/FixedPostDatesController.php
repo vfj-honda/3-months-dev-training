@@ -60,10 +60,10 @@ class FixedPostDatesController extends Controller
         try {
             return DB::transaction(function () use ($request) {
 
-                $fpd = FixedPostDates::find($request->fixed_post_date_id);
+                $fpd = FixedPostDates::find($request->delete_fpd_id);
 
                 $fpd->delete();
-                back()->with('success', '正常に取り消されました');
+                return back()->with('success', '正常に取り消されました');
 
             });
         } catch (Exception $e) {

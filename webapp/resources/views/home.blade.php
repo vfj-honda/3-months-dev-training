@@ -147,6 +147,7 @@ function beforeMonth($currentYear, $currentMonth)
     <input type="submit" value="更新" class="btn btn-primary">
   </div>
 </form>
+@endif
 
 
 
@@ -158,7 +159,6 @@ function beforeMonth($currentYear, $currentMonth)
       <input type="submit" value="送信">
     </div>
   </form>
-
 
 
 
@@ -183,6 +183,7 @@ function beforeMonth($currentYear, $currentMonth)
   </div>
 </form>
 
+@if(isset($fixedPostDates))
 <h4>指定を削除</h4>
 <form action="{{ route('admin.fixed_post_date.destroy') }}" method="post">
 @method('DELETE')
@@ -190,15 +191,14 @@ function beforeMonth($currentYear, $currentMonth)
   <div class="form-group">
     指定投稿日:
     <select name="delete_fpd_id" id="delete_fpd_id">
-      @foreach ($fixed_post_dates as $fpd)
-        <option value="{{ $fpd->id }}">{{ $fpd->fixed_post_day . $fpd->name }}</option>
+      @foreach ($fixedPostDates as $fpd)
+        <option value="{{ $fpd->id }}">{{ substr($fpd->fixed_post_day, 5, 5) . $fpd->name }}</option>
       @endforeach
     </select>
     <input type="submit" value="更新" class="btn btn-primary">
   </label>
   </div>
 </form>
-
 @endif
 @endadmin
 </div>

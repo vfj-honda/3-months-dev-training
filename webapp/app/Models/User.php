@@ -55,4 +55,18 @@ class User extends Authenticatable
     {
         return $this->hasOne('\App\Models\Orders');
     }
+
+    public function isOnlyAdministrator()
+    {
+        $not_auth_employee = User::where('authority', '=', 0)
+                                 ->orderBy('id', 'asc')
+                                 ->get();
+        $all_employee = User::all();
+
+        if (($not_auth_employee->count() + 1) == $all_employee->count()) {
+            return True;
+        }
+
+        return False;
+    }
 }

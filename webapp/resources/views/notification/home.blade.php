@@ -26,6 +26,8 @@
       </div>
       <div class="form-group">
         <label for="chatwork_text">文面 (chatwork)</label>
+        <span><button class="btn btn-secondary" id="btn-preview">preview</button></span>
+        @csrf
         <textarea name="chatwork_text" id="chatwork_text" class="form-control input-lg" rows="7">
         {{ $notification->chatwork_text }}
         </textarea>
@@ -44,9 +46,6 @@
       <input type="button" onclick="submit();" value="更新" class="btn btn-primary">
     </form>
 
-@if (isset($res))
-{{ var_dump($res) }}
-@endif
 
 @stop
 
@@ -56,5 +55,25 @@
 
 @section('js')
    <script>
+
+$('#btn-preview').click(function(){
+
+    let data = {
+      'chatwork_text': $('#chatwork_text').val()
+     }
+
+    $.ajax({
+      type: 'post',
+      url: '/api/admin/notification/preview',
+      data: data,
+      dataType: 'json',
+    })
+    .done((res) => {
+      alert(res.converted_notification_text)
+    })
+    .fail((error) => {
+      alert('失敗しました')
+    })
+  })
    </script>
 @stop

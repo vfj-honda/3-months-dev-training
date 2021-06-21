@@ -196,8 +196,12 @@ class EmployeeController extends Controller
     {
         try {
             return DB::transaction(function() use ($request) {
+
                 
                 $employee = User::find($request->diselevate_user_id);
+                if ($employee->isOnlyAdministrator()) {
+                    return back()->withErrors('管理者がいなくなってしまいます。');
+                }
         
                 $employee->authority = 0;
                 

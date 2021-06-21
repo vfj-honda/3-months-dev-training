@@ -5,6 +5,18 @@ use App\Models\User;
 $admin = auth()->user()->authority;
 $username  = auth()->user()->name;
 $users = User::all();
+function nextMonth($currentYear, $currentMonth)
+{
+  $nextMonth = $currentMonth + 1 > 12 ? 1 : $currentMonth + 1;
+  $nextYear  = $currentMonth + 1 > 12 ? $currentYear + 1 : $currentYear;
+  return [$nextYear, $nextMonth];
+}
+function beforeMonth($currentYear, $currentMonth)
+{
+  $beforeMonth = $currentMonth - 1 == 0 ? 12 : $currentMonth - 1;
+  $beforeYear  = $currentMonth - 1 == 0 ? $currentYear - 1 : $currentYear;
+  return [$beforeYear, $beforeMonth];
+}
 ?>
 
 @extends($admin ? 'adminlte::page' : 'layouts.main')
@@ -44,12 +56,12 @@ $users = User::all();
     </div>
     <div class="row justify-content-between">
       <label for=""　class="col-2">
-        <form action="{{ route('user.home', [$currentYear, $currentMonth-1]) }}" method="get">
+        <form action="{{ route('user.home', beforeMonth($currentYear, $currentMonth)) }}" method="get">
         <input type="submit" value="前月へ" class='btn btn-secondary'></form>
       </label>
 
       <label for=""　class="col-2">
-        <form action="{{ route('user.home', [$currentYear, $currentMonth+1]) }}" method="get">
+        <form action="{{ route('user.home', nextMonth($currentYear, $currentMonth)) }}" method="get">
         <input type="submit" value="次月へ" class='btn btn-secondary'></form>
       </label>
       
@@ -104,8 +116,8 @@ $users = User::all();
 
 @admin
 
-
-<h1>Skipの登録</h1>
+@if(isset($skips))
+<h4>Skipの登録</h4>
 
 <form action="{{ route('admin.skip.create') }}" method="post">
 @csrf
@@ -118,7 +130,7 @@ $users = User::all();
   </div>
 </form>
 
-<h1>Skipの削除</h1>
+<h4>Skipの削除</h4>
 
 <form action="{{ route('admin.skip.destroy') }}" method="post">
 @method('DELETE')
@@ -150,7 +162,7 @@ $users = User::all();
 
 
 
-<h3>投稿者を指定して投稿日を登録する</h3>
+<h4>投稿者を指定</h4>
 
 <form action="{{ route('admin.fixed_post_date.create') }}" method="post">
 @csrf
@@ -171,9 +183,23 @@ $users = User::all();
   </div>
 </form>
 
+<h4>指定を削除</h4>
+<form action="{{ route('admin.fixed_post_date.destroy') }}" method="post">
+@method('DELETE')
+@csrf
+  <div class="form-group">
+    指定投稿日:
+    <select name="delete_fpd_id" id="delete_fpd_id">
+      @foreach ($fixed_post_dates as $fpd)
+        <option value="{{ $fpd->id }}">{{ $fpd->fixed_post_day . $fpd->name }}</option>
+      @endforeach
+    </select>
+    <input type="submit" value="更新" class="btn btn-primary">
+  </label>
+  </div>
+</form>
 
-
-
+@endif
 @endadmin
 </div>
 @endsection

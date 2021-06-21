@@ -22,12 +22,16 @@ class CalendarService {
         # datesの中身は
         # ['2021-05-01' => Carbon('2021-05-01'), ...]
         $dates = $calendar->getCalendar($year, $month);
+
+        $today = Carbon::today();
         
         # 最新の投稿を取得
         $yesterday_order_point = PostHistories::latest('post_day')
-                                              ->join('orders', 'post_histories.user_id', '=', 'orders.user_id')
-                                              ->select('orders.order_number')
-                                              ->first();
+            ->join('orders', 'post_histories.user_id', '=', 'orders.user_id')
+            ->select('orders.order_number')
+            ->first();
+
+
         # 一巡
         $orders = Orders::first()
                         ->getOrders($yesterday_order_point->order_number);
@@ -35,12 +39,12 @@ class CalendarService {
         # カレンダーの初めから昨日までの投稿を取得
         $d = array_key_first($dates);
         $post_histories = PostHistories::where('post_day', '>=', $d)
+                                       ->where('post_day', '<', $today->format('Y-m-d'))
                                        ->join('users', 'post_histories.user_id', '=', 'users.id')
                                        ->select('users.id', 'users.name', 'post_histories.post_day')
                                        ->get();
         
         # 今日からカレンダーの終わりまでのスキップを取得
-        $today = Carbon::today();
         $end_d = array_key_last($dates);
         $start_d  = $today->format('Y-m-d');
         $skips = Skips::where('skip_day', '<', $end_d)
@@ -207,53 +211,61 @@ class CalendarService {
         $latest_fixed_post_day = FixedPostDates::where('fixed_post_day', '<', array_key_first($dates))
                                                ->where('fixed_post_day', '>=', $today->format('Y-m-d'))
                                                ->latest('fixed_post_day')->first();
-        $index_day = $latest_fixed_post_day == null ? $today : new Carbon($latest_fixed_post_day->fixed_post_day);
+        if ($latest_fixed_post_day == null) {
 
-        Log::info($index_day);
+            # 今日〜カレンダーの初日
+            $yesterday_order_point = PostHistories::latest('post_day')
+            ->join('orders', 'post_histories.user_id', '=', 'orders.user_id')
+            ->select('orders.order_number')
+            ->first();
 
-        # index_dayからカレンダーの初めまでの平日数を取得
-        $target_d = array_key_first($dates);
-        $week_days_count = $index_day->diffInWeekdays($target_d);
+            $orders = Orders::first()->getOrders($yesterday_order_point->order_number);
 
-        # index_dayからカレンダーの初めまでのスキップ数を取得
-        $s_d = $index_day->format('Y-m-d');
-        $skips   = Skips::groupBy('skip_day')
-                        ->where('skip_day', '>=', $s_d)
-                        ->where('skip_day', '<', $target_d)
-                        ->select('skip_day')
-                        ->get();
+            # カレンダーの初めまでの平日数を取得
+            $week_days_count = $today->diffInWeekdays(array_key_first($dates));
 
-        $skip_days_count = $skips->count();
+            # カレンダーの初めまでのスキップ数を取得
+            $skips   = Skips::groupBy('skip_day')
+                            ->where('skip_day', '>=', $today->format('Y-m-d'))
+                            ->where('skip_day', '<', array_key_first($dates))
+                            ->select('skip_day')
+                            ->get();
+
+            $skip_days_count = $skips->count();
+
+        } else {
+            
+            $fpd_order_point = Orders::where('user_id', '=', $latest_fixed_post_day->user_id)->first();
+
+            $orders = Orders::first()->getOrders($fpd_order_point->order_number - 1);
+            
+            # カレンダーの初めまでの平日数を取得
+            $index_day = new Carbon($latest_fixed_post_day->fixed_post_day);
+            $week_days_count = $index_day->diffInWeekdays(array_key_first($dates));
+
+            # カレンダーの初めまでのスキップ数を取得
+            $skips   = Skips::groupBy('skip_day')
+                            ->where('skip_day', '>=', $index_day->format('Y-m-d'))
+                            ->where('skip_day', '<', array_key_first($dates))
+                            ->select('skip_day')
+                            ->get();
+
+            $skip_days_count = $skips->count();
+        }
+
+
 
         # 投稿日数 = 平日数 - スキップする日数
         $post_days_count = $week_days_count - $skip_days_count;
 
-        # 一巡を取得
-        if ($index_day->isSameDay($today)) {
-            
-            $yesterday_order_point = PostHistories::latest('post_day')
-                                                  ->join('orders', 'post_histories.user_id', '=', 'orders.user_id')
-                                                  ->select('orders.order_number')
-                                                  ->first();
-            $orders = Orders::first()
-                            ->getOrders($yesterday_order_point->order_number);
-        } else {
-            
-            $fpd_order_point = Orders::where('user_id', '=', $latest_fixed_post_day->user_id)->first();
-            $orders = Orders::first()
-                            ->getOrders($fpd_order_point->order_number - 1);
-            Log::info($fpd_order_point);
-        }
 
         # 順番を調整
         $order_index = $post_days_count % $orders->count();
 
         # $dates と Skipsを結合
-        $first_d = array_key_first($dates);
-        $last_d = array_key_last($dates);
         $skips = Skips::groupBy('skip_day')
-                      ->where('skip_day', '>=', $first_d)
-                      ->where('skip_day', '<', $last_d)
+                      ->where('skip_day', '>=', array_key_first($dates))
+                      ->where('skip_day', '<=', array_key_last($dates))
                       ->select('skip_day')
                       ->get();
 
@@ -265,8 +277,8 @@ class CalendarService {
         }
 
         # カレンダーの初めから終わりまでの「投稿者が指定された投稿日」を取得
-        $fpd = FixedPostDates::where('fixed_post_day', '>', $first_d)
-                            ->where('fixed_post_day', '<=', $last_d)
+        $fpd = FixedPostDates::where('fixed_post_day', '>=', array_key_first($dates))
+                            ->where('fixed_post_day', '<=', array_key_last($dates))
                             ->orderBy('fixed_post_day', 'asc')
                             ->get();
 
@@ -306,7 +318,7 @@ class CalendarService {
 
                 $n = $n == $orders->count() ? 0 : $n;
 
-                $value = $dates[$index_day->format('Y-m-d')]->copy();
+                $value = $dates[$index_day->format('Y-m-d')];
 
                 if (!is_array($value)) {
                     # Arrayでない＝$valueはCarbon＝skips,post_historiesテーブルに日付がない

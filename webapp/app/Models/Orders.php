@@ -31,6 +31,7 @@ class Orders extends Model
         $order_count = $s_d->diffInDays($end_day); # 何日分か
 
         $orders = $this->getOrders($order->order_number - 1);
+
         $orders = $orders->chunk($order_count);
         
         return $orders->get(0);

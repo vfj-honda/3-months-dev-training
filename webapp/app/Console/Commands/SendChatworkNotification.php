@@ -42,10 +42,10 @@ class SendChatworkNotification extends Command
     public function handle()
     {
         Log::setDefaultDriver('batch');
-        $today = Carbon::now()->format('Y-m-d');
+        $today = Carbon::today();
 
         # skipsに今日の日付があるかチェック
-        $res = Skips::where('skip_day', '=', $today)
+        $res = Skips::where('skip_day', '=', $today->format('Y-m-d'))
                     ->first();
 
         if (!$res == null) {
@@ -56,13 +56,13 @@ class SendChatworkNotification extends Command
         $result = $chatwork_service->post();
         
         if($result == true) {
-            $this->info('');
-            Log::info('');
+            $this->info('send chatwork message successfully.');
+            Log::info('send chatwork message successfully.'.'['.$today->format('Y-m-d').']');
         } elseif ($result == 'not posted') {
             Log::info('notification does not posted' );
         } elseif ($result == false) {
-            $this->error('');
-            Log::error('');
+            $this->error('send chatwork message failed.');
+            Log::error('send chatwork message failed.'.'['.$today->format('Y-m-d').']');
         }
 
     }

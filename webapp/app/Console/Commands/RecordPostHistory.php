@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Models\FixedPostDates;
 use App\Models\Orders;
 use App\Models\PostHistories;
 use App\Models\Skips;
@@ -52,11 +53,14 @@ class RecordPostHistory extends Command
                                                    ->first();
 
             $order_number = $yesterday_post_history->order_number;
-            $post_day     = substr($yesterday_post_history->post_day, 0, 10);
+            $order_point = Orders::where('order_number', '=', $order_number + 1)
+                                 ->first();
 
-            $today = Carbon::now()->format('Y-m-d');
 
-            if ($post_day == $today) {
+            $post_day = substr($yesterday_post_history->post_day, 0, 10);
+            $today    = Carbon::today();
+            if ($post_day == $today->format('Y-m-d')) {
+                # 二重insert防止
                 $this->info('Post History record has already done.');
                 return;
             }
@@ -68,18 +72,26 @@ class RecordPostHistory extends Command
                 return;
             }
 
-            $today_order = Orders::where('order_number', '=', $order_number+1)
-                                 ->first();
+            # 今日が「投稿者を指定した投稿日」かチェック
+            $fpd = FixedPostDates::where('fixed_post_day', '=', $today->format('Y-m-d'))->first();
+            if (!$fpd == null) {
+
+                $order_point = Orders::where('user_id', '=', $fpd->user_id)->first();
+
+            }
+
+            
 
             $ph = new PostHistories;
             $ph->post_day = $today;
-            $ph->user_id  = $today_order->user_id;
+            $ph->user_id  = $order_point->user_id;
 
             if( $ph->save() ) {
                 $this->info('Post History recorded successfully.'.' ['.$today.']');
                 Log::info('Post History recorded successfully.'.' ['.$today.']');
             } else {
-                Log::error('Post History record failed'.'['.$today.']');
+                $this->info('Post History record failed.'.' ['.$today.']');
+                Log::error('Post History record failed.'.'['.$today.']');
             }
 
         });

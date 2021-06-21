@@ -21,14 +21,32 @@ class FixedPostDatesController extends Controller
             return DB::transaction(function () use ($request) {
 
                 $fpd = new FixedPostDates;
-                $fpd->fixed_post_day = $request->create_fixed_post_day;
-                $fpd->user_id        = $request->user_id;
+                if ($fpd->isDuplicate($request->create_fixed_post_day)) {
+                    # 重複していた場合...
+                    $dump_fpd = FixedPostDates::where('fixed_post_day', '=', $request->create_fixed_post_day)->first();
+                    $dump_fpd->delete();
+                    
+                    $fpd->fixed_post_day = $request->create_fixed_post_day;
+                    $fpd->user_id        = $request->user_id;
 
-                if (!$fpd->save()) {
-                    throw new Exception('create fixed post day is failed!');
+                    if (!$fpd->save()) {
+                        throw new Exception('失敗しました');
+                    }
+
+                    return back()->with('success', '正常に作成されました');
+
+                } else {
+                    
+                    $fpd->fixed_post_day = $request->create_fixed_post_day;
+                    $fpd->user_id        = $request->user_id;
+    
+                    if (!$fpd->save()) {
+                        throw new Exception('create fixed post day is failed!');
+                    }
+    
+                    return back()->with('success', '正常に作成されました');
+
                 }
-
-                return back()->with('success', '正常に作成されました');
 
             });
         } catch (Exception $e) {

@@ -55,6 +55,7 @@ class HomeController extends Controller
             ->select('users.name', 'fixed_post_dates.fixed_post_day', 'fixed_post_dates.id')
             ->orderBy('fixed_post_day', 'asc')
             ->get();
+            // var_dump(dd($dates));
                 
             return view('home', $data = ['dates' => $dates, 'currentYear' => $year, 'currentMonth' => $month, 'skips' => $skips, 'fixedPostDates' => $fixed_post_dates]);
 

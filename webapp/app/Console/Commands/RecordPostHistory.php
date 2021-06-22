@@ -44,6 +44,7 @@ class RecordPostHistory extends Command
      */
     public function handle()
     {
+        Log::setDefaultDriver('batch');
         # 今日の投稿者をpost_historyに記録する
         DB::transaction( function(){
 
@@ -62,11 +63,12 @@ class RecordPostHistory extends Command
             if ($post_day == $today->format('Y-m-d')) {
                 # 二重insert防止
                 $this->info('Post History record has already done.');
+                Log::info('Post History record has already done.');
                 return;
             }
 
             # skipsに今日の日付があるかチェック
-            $res = Skips::where('skip_day', '=', $today)
+            $res = Skips::where('skip_day', '=', $today->format('Y-m-d'))
                         ->first();
             if (!$res == null) {
                 return;

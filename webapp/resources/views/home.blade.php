@@ -184,7 +184,7 @@ function beforeMonth($currentYear, $currentMonth)
 </form>
 
 @if(isset($fixedPostDates))
-<h4>指定を削除</h4>
+<h4>指定投稿日を削除</h4>
 <form action="{{ route('admin.fixed_post_date.destroy') }}" method="post">
 @method('DELETE')
 @csrf

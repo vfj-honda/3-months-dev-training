@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreFixedPostDatesRequest extends FormRequest
+class DeleteFixedPostDatesRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,15 +24,13 @@ class StoreFixedPostDatesRequest extends FormRequest
     public function rules()
     {
         return [
-            'create_fixed_post_day' => ['required'],
+            'delete_fpd_id' => ['required']
         ];
     }
 
     public function messages()
     {
         return [
-            'create_fixed_post_day.required' => '日付を指定してください。',
+            'delete_fpd_id.required' => '無効な操作です。',
         ];
-    }
-
-}
+    }}

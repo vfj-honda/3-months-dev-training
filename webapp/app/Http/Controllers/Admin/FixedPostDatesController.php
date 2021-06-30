@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\DeleteFixedPostDatesRequest;
 use App\Http\Requests\StoreFixedPostDatesRequest;
 use App\Models\FixedPostDates;
 use Exception;
@@ -55,7 +56,7 @@ class FixedPostDatesController extends Controller
     }
 
 
-    public function destroy(Request $request)
+    public function destroy(DeleteFixedPostDatesRequest $request)
     {
         try {
             return DB::transaction(function () use ($request) {

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\CSVFileUploadRequest;
 use App\Http\Requests\StoreSkipRequest;
 use App\Models\Skips;
 use Carbon\Carbon;
@@ -70,21 +71,25 @@ class SkipController extends Controller
      * 
      * 
      */
-    public function import(Request $request)
+    public function import(CSVFileUploadRequest $request)
     {
         try {
             
+            # アップロード
             $file_upload_service = new FileUploadService;
-            # アップロードされたファイルを保存
             $path = $file_upload_service->csv_upload($request, 'csv_file');
     
             $csv = fopen($path, 'r');
             $data = fgetcsv($csv);
             while ($data = fgetcsv($csv, $delimiter = ',')) {
                 
+
+                $this->validateDateFormat($data[0]);
+
                 $skip           = new Skips;
                 $date           = new Carbon($data[0]);
                 $skip->skip_day = $date->format('Y-m-d');
+                # バリデーションのためRequestオブジェクトを使用する
                 $re = new Request($request=['skip_day' => $date->format('Y-m-d')]);
                 try {
                     
@@ -101,6 +106,20 @@ class SkipController extends Controller
 
         } catch (Exception $e) {
             return back()->withErrors($e->getMessage());
+        }
+    }
+
+    private function validateDateFormat($date) {
+
+        if (!preg_match('/\A[0-9]{4}\/|-|[0-9]{1,2}\/|-|[0-9]{1,2}\z/', $date)) {
+            throw new Exception('日付の形式が正しくありません');
+        }
+
+        $separator = $date[4];
+        list($year, $month, $day) = explode($separator, $date);
+
+        if (checkdate((int)$month, (int)$day, (int)$year) == false) {
+            throw new Exception('日付が正しくありません');
         }
     }
 }

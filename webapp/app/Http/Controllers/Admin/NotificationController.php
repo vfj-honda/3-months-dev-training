@@ -41,10 +41,10 @@ class NotificationController extends Controller
                 $notification->mail_text           = $request->mail_text;
 
                 if (!$notification->save()) {
-					throw new \Exception('Notification update failed');
+					throw new \Exception('通知設定の更新に失敗しました。');
                 }
             
-                return redirect(route('admin.notification.edit'))->with(['notification' => $notification, 'success' => '更新が完了しました。']);
+                return back()->with(['notification' => $notification, 'success' => '更新が完了しました。']);
             });
 
         

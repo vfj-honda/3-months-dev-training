@@ -7,6 +7,13 @@
 @stop
 
 @section('content')
+
+    @if ($message = Session::get('success'))
+      <div class="alert alert-success">
+        <strong>{{ $message }}</strong>
+      </div>
+    @endif
+
     @if (count($errors) > 0)
       <div class="alert alert-danger">
         <ul>
@@ -28,6 +35,7 @@
         <label for="chatwork_text">文面 (chatwork)</label>
         <span><button class="btn btn-secondary" id="btn-preview">preview</button></span>
         @csrf
+        <label for=""> $today:当日の投稿者, $next:次営業日の投稿者, $afternext:次々営業日の投稿者 </label>
         <textarea name="chatwork_text" id="chatwork_text" class="form-control input-lg" rows="7">
         {{ $notification->chatwork_text }}
         </textarea>

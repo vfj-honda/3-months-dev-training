@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CSVFileUploadRequest;
+use App\Http\Requests\DeleteSkipRequest;
 use App\Http\Requests\StoreSkipRequest;
 use App\Models\Skips;
 use Carbon\Carbon;
@@ -47,7 +48,7 @@ class SkipController extends Controller
      * Destroy Skip.
      * Method: DELETE
      */
-    public function destroy(Request $request)
+    public function destroy(DeleteSkipRequest $request)
     {
         try {
             

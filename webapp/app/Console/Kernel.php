@@ -2,6 +2,7 @@
 
 namespace App\Console;
 
+use Illuminate\Console\Command;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
@@ -15,6 +16,7 @@ class Kernel extends ConsoleKernel
     protected $commands = [
         Commands\RecordPostHistory::class,
         Commands\SendChatworkNotification::class,
+        Commands\CronTestCommand::class
     ];
 
     /**
@@ -28,7 +30,7 @@ class Kernel extends ConsoleKernel
         // $schedule->command('inspire')
         //          ->hourly();
         
-        $schedule->command('post_history:record')
+        $schedule->command('cron:test')
         ->everyMinute();
     }
 

@@ -7,6 +7,7 @@ use App\Http\Requests\StoreEmployeeRequest;
 use App\Models\Orders;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
@@ -46,36 +47,6 @@ class EmployeeController extends Controller
     
 
     /**
-    * Destroy Employee(User).
-    * Method: DELETE
-    * @return \Illuminate\Http\Response
-    */
-    public function destroy(Request $request){
-        try {
-            return DB::transaction(function() use ($request) {
- 
-                Log::info(var_dump(dd($request)));
-                return back()->with('success', '削除が完了しました。');
-                # 1) get record
-                $employee = User::find($request->id);
-
-                # 2) delete
-                $employee->order->delete();
-                $employee->delete();
-
-
-            }); 
- 
- 
-        } catch(\Exception $e) {
- 
-        return back()->withErrors($e->getMessage());
- 
-        }
- 
-    }
- 
-    /**
     * Store new Employee(User).
     * Method: POST
     * @return \Illuminate\Http\Response
@@ -84,6 +55,7 @@ class EmployeeController extends Controller
         try {
              return DB::transaction(function() use ($request) {
 
+                Log::setDefaultDriver('operation');
                 # 1) set data
                 $employee = new User();
                 $employee->name = $request->name;
@@ -105,6 +77,7 @@ class EmployeeController extends Controller
 					throw new \Exception('Save Employee failed');
 				}
 
+                Log::info(Auth::user()->name . 'が社員「' . $employee->name . '」を作成');
                 return redirect(route('admin.employee.create'))->with('success', '社員を作成しました。');
 
             }); 
@@ -127,8 +100,14 @@ class EmployeeController extends Controller
        try {
             return DB::transaction(function() use ($request, $id) {
  
+                Log::setDefaultDriver('operation');
                  # 1) set data
                 $employee = User::find($request->id);
+                # Logのための前データ
+                $old_name = $employee->name;
+                $old_email = $employee->email;
+                $old_chatwork_id = $employee->chatwork_id;
+
                 $employee->name = $request->name;
                 $employee->email = $request->email;
                 $employee->chatwork_id = $request->chatwork_id;
@@ -138,6 +117,8 @@ class EmployeeController extends Controller
                     throw new \Exception('Save Employee failed');
                 }
  
+                Log::info(Auth::user()->name . 'が社員「' . $employee->name . '」を編集');
+                Log::info('name:'.$old_name.'=>'.$employee->name.'|email:'.$old_email.'=>'.$employee->email.'|chatwork_id:'.$old_chatwork_id.'=>'.$employee->chatwork_id);
                 return redirect(route('admin.employee.edit', $id))->with('success', '社員情報の更新が完了しました。');
  
             }); 

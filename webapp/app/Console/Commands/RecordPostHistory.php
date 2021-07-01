@@ -58,9 +58,9 @@ class RecordPostHistory extends Command
                                  ->first();
 
 
-            $post_day = substr($yesterday_post_history->post_day, 0, 10);
+            $last_post_day = substr($yesterday_post_history->post_day, 0, 10);
             $today    = Carbon::today();
-            if ($post_day == $today->format('Y-m-d')) {
+            if ($last_post_day == $today->format('Y-m-d')) {
                 # 二重insert防止
                 $this->info('Post History record has already done.');
                 Log::info('Post History record has already done.');

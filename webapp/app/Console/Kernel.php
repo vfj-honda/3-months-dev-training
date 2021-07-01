@@ -32,6 +32,8 @@ class Kernel extends ConsoleKernel
         
         $schedule->command('cron:test')
         ->everyMinute();
+        $schedule->command('post_history:record')
+        ->dailyAt('23:55');
     }
 
     /**

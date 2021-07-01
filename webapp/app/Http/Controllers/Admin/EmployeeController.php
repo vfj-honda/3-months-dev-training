@@ -50,18 +50,19 @@ class EmployeeController extends Controller
     * Method: DELETE
     * @return \Illuminate\Http\Response
     */
-    public function destroy(Request $request, $id){
+    public function destroy(Request $request){
         try {
-            return DB::transaction(function() use ($id) {
+            return DB::transaction(function() use ($request) {
  
-                # 1) set data
-                $employee = User::find($id);
+                Log::info(var_dump(dd($request)));
+                return back()->with('success', '削除が完了しました。');
+                # 1) get record
+                $employee = User::find($request->id);
 
                 # 2) delete
                 $employee->order->delete();
                 $employee->delete();
 
-                return redirect(route('admin.employee.list'))->with('success', '削除が完了しました。');
 
             }); 
  

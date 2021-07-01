@@ -33,7 +33,6 @@ Route::group(['prefix' => '/admin', 'middleware' => 'auth'], function(){
             Route::put('/update/{id}', 'Admin\EmployeeController@update')->name('admin.employee.update');
     
             Route::get('/list', 'Admin\EmployeeController@show')->name('admin.employee.list');
-            Route::delete('/destroy', 'Admin\EmployeeController@destroy')->name('admin.employee.destroy');
     
             Route::get('/authority', 'Admin\EmployeeController@authority')->name('admin.employee.authority');
             Route::put('/authority/elevate', 'Admin\EmployeeController@elevate')->name('admin.employee.authority.elevate');

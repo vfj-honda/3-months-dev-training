@@ -17,3 +17,4 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 Route::post('/admin/notification/preview', 'Api\NotificationsController@preview');
+Route::delete('/admin/employee/destroy', 'Api\EmployeeController@destroy');

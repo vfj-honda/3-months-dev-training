@@ -18,3 +18,5 @@
 Node.jsのバージョン確認
 
 `$ docker-compose exec php node -v` 
+
+ssh ec2-user@ec2-3-112-54-104.ap-northeast-1.compute.amazonaws.com -i .ssh/ec2-key-vfj-blog-management.pem

@@ -40,8 +40,6 @@ class ChatworkAPIService {
         $body = $this->get_notice_text($notice->chatwork_text);
         $client = new Client();
 
-        Log::info($body);
-        return;
         # 送信
         $response = $client->request($method, $endpoint, [
             'headers' => $headers,

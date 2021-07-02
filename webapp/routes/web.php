@@ -16,6 +16,8 @@
 
 Auth::routes(['register' => false]);
 
+Route::get('/', 'Admin\HomeController@index');
+
 Route::group(['prefix' => '/admin', 'middleware' => 'auth'], function(){
     
     Route::get('/', 'Admin\HomeController@index')->name('user.root');

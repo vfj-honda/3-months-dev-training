@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreNotificationRequest;
 use App\Models\Notifications;
+use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -39,6 +40,7 @@ class NotificationController extends Controller
                 $notification->chatwork_text       = $request->chatwork_text;
                 $notification->mail_flag           = $request->mail_flag == 'on' ? 1 : 0;
                 $notification->mail_text           = $request->mail_text;
+                $notification->created_at          = Carbon::now();
 
                 if (!$notification->save()) {
 					throw new \Exception('通知設定の更新に失敗しました。');

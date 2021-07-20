@@ -16,6 +16,7 @@ class DatabaseSeeder extends Seeder
             PostHistoriesSeeder::class,
             SkipsTableSeeder::class,
             OrdersTableSeeder::class,
+            NtoficationsTableSeeder::class,
             ]);
     }
 }

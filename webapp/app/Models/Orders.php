@@ -19,6 +19,20 @@ class Orders extends Model
 
 
     /**
+     * 次の順番のOrderを返す
+     * 
+     * @return Orders
+     */
+    public static function getNext(int $order_number)
+    {
+        if (Orders::count() == $order_number) {
+            return Orders::where('order_number', '=', 1)->first();
+        } else {
+            return Orders::where('order_number', '=', $order_number + 1)->first();
+        }
+
+    }
+    /**
      * 指定された期間のorderを返す
      * 
      * @return Collection of Orders binding User

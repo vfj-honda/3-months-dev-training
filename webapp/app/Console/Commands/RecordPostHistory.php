@@ -54,8 +54,7 @@ class RecordPostHistory extends Command
                                                    ->first();
 
             $order_number = $yesterday_post_history->order_number;
-            $order_point = Orders::where('order_number', '=', $order_number + 1)
-                                 ->first();
+            $order_point = Orders::getNext($order_number);
 
 
             $last_post_day = substr($yesterday_post_history->post_day, 0, 10);
